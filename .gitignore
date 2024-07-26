@@ -28,3 +28,8 @@ Artifacts.toml
 .vscode/*
 *.code-workspace
 profile.pb.gz
+
+# Binary builder
+**/build/
+**/products/
+/tmp/

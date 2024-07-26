@@ -2,37 +2,56 @@
 # `julia build_tarballs.jl --help` to see a usage message.
 using BinaryBuilder, Pkg
 
-name = "catch22"
-version = v"0.4.0"
+name = "catchaMouse16"
+version = v"0.1.0"
 
 # Collection of sources required to complete build
 sources = [
-    GitSource("https://github.com/chlubba/catch22.git",
-              "2e1a271c6a7437b6a4a754e1adc7e34d7a224c01"),
+    GitSource("https://github.com/DynamicsAndNeuralSystems/catchaMouse16.git",
+              "2a952451acf6114de562da6007e37ff6e013b157")
 ]
 
 # Bash recipe for building across all platforms
+makefile = raw"""
+CC = gcc
+CFLAGS = -std=c99 -fPIC -Wall -Wextra -g -O2 -lm -lgsl -lgslcblas
+LDFLAGS = -shared -lm -lgsl -lgslcblas
+RM = rm -f
+TARGET_LIB = "lib${SRC_NAME}.${dlext}"
+
+SRCS = main.c fft.c stats.c helper_functions.c histcounts.c CO_AddNoise.c CO_AutoCorr.c CO_HistogramAMI.c CO_NonlinearAutocorr.c CO_TranslateShape.c DN_RemovePoints.c FC_LoopLocalSimple.c IN_AutoMutualInfoStats.c PH_Walker.c SC_FluctAnal.c ST_LocalExtrema.c SY_DriftingMean.c SY_SlidingWindow.c
+
+OBJS = $(SRCS:.c=.o)
+.PHONY: all;
+all: ${TARGET_LIB}
+$(TARGET_LIB): $(OBJS)
+	$(CC) ${LDFLAGS} -o $@ $^
+$(SRCS:.c=.d):%.d:%.c
+	$(CC) $(CFLAGS) -MM $< >$@\ninclude $(SRCS:.c=.d)
+.PHONY: clean
+clean:-${RM} ${TARGET_LIB} ${OBJS} $(SRCS:.c=.d)
+"""
 script = raw"""
 cd $WORKSPACE/srcdir
-cd catch22/C/
-echo -e 'CFLAGS = -fPIC\nLDFLAGS = -shared\nRM = rm -f\nTARGET_LIB = "lib${SRC_NAME}.${dlext}"\nSRCS = main.c CO_AutoCorr.c DN_Mean.c DN_Spread_Std.c DN_HistogramMode_10.c DN_HistogramMode_5.c DN_OutlierInclude.c FC_LocalSimple.c IN_AutoMutualInfoStats.c MD_hrv.c PD_PeriodicityWang.c SB_BinaryStats.c SB_CoarseGrain.c SB_MotifThree.c SB_TransitionMatrix.c SC_FluctAnal.c SP_Summaries.c butterworth.c fft.c helper_functions.c histcounts.c splinefit.c stats.c\nOBJS = $(SRCS:.c=.o)\n.PHONY: all\nall: ${TARGET_LIB}\n$(TARGET_LIB): $(OBJS);    $(CC) ${LDFLAGS} -o $@ $^\n$(SRCS:.c=.d):%.d:%.c;$(CC) $(CFLAGS) -MM $< >$@\ninclude $(SRCS:.c=.d)\n.PHONY: clean\nclean:-${RM} ${TARGET_LIB} ${OBJS} $(SRCS:.c=.d)' >> Makefile
-make
-mkdir "${libdir}"
-cp "./lib${SRC_NAME}.${dlext}" "${libdir}/lib${SRC_NAME}.${dlext}"
-"""
+cd catchaMouse16/C/src/
+echo -e '""" * makefile * raw"""' >> Makefile
+    make
+    cp "./lib${SRC_NAME}.${dlext}" "${libdir}/lib${SRC_NAME}.${dlext}"
+    """
 
 # These are the platforms we will build for by default, unless further
 # platforms are passed in on the command line
-platforms = supported_platforms()
+platforms = supported_platforms()[[2]] # Just linux for now
 
 # The products that we will ensure are always built
 products = [
-    LibraryProduct("libcatch22", :ccatch22),
+    LibraryProduct("libcatchaMouse16", :ccatchaMouse16)
 ]
 
 # Dependencies that must be installed before this package can be built
-dependencies = Dependency[]
+dependencies = [Dependency("GSL_jll")]
 
 # Build the tarballs, and possibly a `build.jl` as well.
-build_tarballs(ARGS, name, version, sources, script, platforms, products, dependencies;
-               preferred_gcc_version = v"9.1.0", julia_compat = "1.6")
+args = ["--deploy=local"]
+build_tarballs(args, name, version, sources, script, platforms, products, dependencies;
+               preferred_gcc_version = v"9.1.0", julia_compat = "1.9")

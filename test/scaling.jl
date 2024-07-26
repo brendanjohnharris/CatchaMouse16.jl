@@ -1,22 +1,22 @@
-using Catch22
+using CatchaMouse16
 using Plots
 
-function timeCatch22(𝒳)
-    t⃗ = [(@info size(𝐱); @timed catch22(𝐱)) for 𝐱 in 𝒳]
+function timeCatchaMouse16(𝒳)
+    t⃗ = [(@info size(𝐱); @timed catchaMouse16(𝐱)) for 𝐱 in 𝒳]
     ([x.time for x in t⃗], [x.bytes for x in t⃗])
 end;
-timeCatch22([randn(1000)])
+timeCatchaMouse16([randn(1000)])
 
 N⃗ = Int.(round.(exp10.(0.9:0.1:5)));
 
 ## Single-threaded
 𝒳 = [randn(N) for N in N⃗];
-t⃗, b⃗ = timeCatch22(𝒳);
+t⃗, b⃗ = timeCatchaMouse16(𝒳);
 
 gray = :gray50
 p = plot(N⃗, t⃗, scale = :log10, label = :none, color = :cornflowerblue,
          markerstrokecolor = :cornflowerblue, markersize = 2, marker = :o,
-         right_margin = 15Plots.mm, ylims = (1e-4, 1e1), xlims = (1e1, 1e5),
+         right_margin = 15Plots.mm, xlims = (1e1, 1e5),
          framestyle = :box, grid = :off)
 plot!(xguide = "Time-series length (samples)", yguide = "Time (s)", minorticks = true,
       yforeground_color_guide = :cornflowerblue, dpi = 1200,
@@ -35,12 +35,12 @@ savefig(p, joinpath(@__DIR__, "../scaling.png"))
 
 ## Multi-threaded
 𝒳 = [randn(N, 100) for N in N⃗];
-t⃗, b⃗ = timeCatch22(𝒳);
+t⃗, b⃗ = timeCatchaMouse16(𝒳);
 
 gray = :gray50
 p = plot(N⃗, t⃗, scale = :log10, label = :none, color = :cornflowerblue,
          markerstrokecolor = :cornflowerblue, markersize = 2, marker = :o,
-         right_margin = 15Plots.mm, ylims = (1e-3, 1e2), xlims = (1e1, 1e5), grid = :off,
+         right_margin = 15Plots.mm, ylims = (1e-2, 1e2), xlims = (1e1, 1e5), grid = :off,
          framestyle = :box)
 plot!(xguide = "Time-series length (samples)", yguide = "Time (s)", minorticks = true,
       yforeground_color_guide = :cornflowerblue, dpi = 1200,
