@@ -9,7 +9,7 @@ import Statistics: mean, std, cov
 
 function __init__()
     catchaMouse16_jll.__init__()
-    lib = dlopen(ccatchaMouse16)
+    lib = dlopen(libcatchaMouse16)
     global fbindings = Dict{Symbol, Ptr{Cvoid}}(f => dlsym(lib, f)
                                                 for f in featurenames)
 end

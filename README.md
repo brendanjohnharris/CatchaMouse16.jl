@@ -5,7 +5,7 @@
 [![DOI](https://zenodo.org/badge/342070622.svg)](https://zenodo.org/badge/latestdoi/342070622)
 <!-- ![build](https://github.com/brendanjohnharris/CatchaMouse16.jl/actions/workflows/CI.yml/badge.svg) -->
 
-A Julia package wrapping [_catchaMouse16_](https://www.github.com/dynamicsandneuralsystems/catchaMouse16), which is a set of 16 time-series features shown to be performant in BOLD fMRI time-series classification problems.
+A Julia package wrapping [_catchaMouse16_](https://www.github.com/dynamicsandneuralsystems/catchaMouse16), which is a set of 16 time-series features shown to be performant in BOLD fMRI time-series classification problems. This package mirrors [Catch22.jl](https://www.github.com/brendanjohnharris/Catch22.jl), which is a set of 22 features for general time-series problems.
 
 The [_catchaMouse16_](https://www.github.com/dynamicsandneuralsystems/catchaMouse16) repository provides these 22 features, originally coded in Matlab as part of the [_hctsa_](https://github.com/benfulcher/hctsa) toolbox, as C functions (in addition to Matlab and Python wrappers). This package simply uses Julia's `ccall` to wrap these C functions from a shared library that is accessed through [catchaMouse16_jll](https://github.com/JuliaBinaryWrappers/catchaMouse16_jll.jl) and compiled by the fantastic [BinaryBuilder](https://github.com/JuliaPackaging/BinaryBuilder.jl) package.
 
