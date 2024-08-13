@@ -3,7 +3,6 @@
 [![Build Status](https://github.com/brendanjohnharris/CatchaMouse16.jl/actions/workflows/CI.yml/badge.svg?branch=main)](https://github.com/brendanjohnharris/CatchaMouse16.jl/actions/workflows/CI.yml?query=branch%3Amain)
 [![Coverage](https://codecov.io/gh/brendanjohnharris/catchaMouse16.jl/branch/main/graph/badge.svg)](https://codecov.io/gh/brendanjohnharris/CatchaMouse16.jl)
 [![DOI](https://zenodo.org/badge/342070622.svg)](https://zenodo.org/badge/latestdoi/342070622)
-<!-- ![build](https://github.com/brendanjohnharris/CatchaMouse16.jl/actions/workflows/CI.yml/badge.svg) -->
 
 A Julia package wrapping [_catchaMouse16_](https://www.github.com/dynamicsandneuralsystems/catchaMouse16), which is a set of 16 time-series features shown to be performant in BOLD fMRI time-series classification problems. This package mirrors [Catch22.jl](https://www.github.com/brendanjohnharris/Catch22.jl), which is a set of 22 features for general time-series problems.
 
