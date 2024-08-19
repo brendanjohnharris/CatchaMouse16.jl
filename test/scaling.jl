@@ -31,7 +31,9 @@ plot!(twinx(), N⃗, b⃗ ./ (1024^2), scale = :log10, label = :none, color = :c
       foreground_color_axis = gray, foreground_color_border = gray,
       foreground_color_text = gray, foreground_color_guide = gray, framestyle = :box)
 
-savefig(p, joinpath(@__DIR__, "../scaling.png"))
+fname = joinpath(@__DIR__, "../scaling.png")
+rm(fname, force = true)
+savefig(p, fname)
 
 ## Multi-threaded
 𝒳 = [randn(N, 100) for N in N⃗];
@@ -40,7 +42,7 @@ t⃗, b⃗ = timeCatchaMouse16(𝒳);
 gray = :gray50
 p = plot(N⃗, t⃗, scale = :log10, label = :none, color = :cornflowerblue,
          markerstrokecolor = :cornflowerblue, markersize = 2, marker = :o,
-         right_margin = 15Plots.mm, ylims = (1e-2, 1e2), xlims = (1e1, 1e5), grid = :off,
+         right_margin = 15Plots.mm, ylims = (1e-2, 10^1.5), xlims = (1e1, 1e5), grid = :off,
          framestyle = :box)
 plot!(xguide = "Time-series length (samples)", yguide = "Time (s)", minorticks = true,
       yforeground_color_guide = :cornflowerblue, dpi = 1200,
@@ -55,4 +57,6 @@ plot!(twinx(), N⃗, b⃗ ./ (1024^2), scale = :log10, label = :none, color = :c
       foreground_color_axis = gray, foreground_color_border = gray,
       foreground_color_text = gray, foreground_color_guide = gray, framestyle = :box)
 
-savefig(p, joinpath(@__DIR__, "../multithread_scaling.png"))
+fname = joinpath(@__DIR__, "../multithread_scaling.png")
+rm(fname, force = true)
+savefig(p, fname)
