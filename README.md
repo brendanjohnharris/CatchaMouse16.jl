@@ -8,7 +8,7 @@ A Julia package wrapping [_catchaMouse16_](https://www.github.com/dynamicsandneu
 
 The [_catchaMouse16_](https://www.github.com/dynamicsandneuralsystems/catchaMouse16) repository provides these 22 features, originally coded in Matlab as part of the [_hctsa_](https://github.com/benfulcher/hctsa) toolbox, as C functions (in addition to Matlab and Python wrappers). This package simply uses Julia's `ccall` to wrap these C functions from a shared library that is accessed through [catchaMouse16_jll](https://github.com/JuliaBinaryWrappers/catchaMouse16_jll.jl) and compiled by the fantastic [BinaryBuilder](https://github.com/JuliaPackaging/BinaryBuilder.jl) package.
 
-Below we provide a brief getting-started guide to using CatchaMouse16.jl. For more detailed information on the _catchaMouse16_ feature set, such as in-depth descriptions of each feature and a list of publications that use _catchaMouse16_, see the [_catchaMouse16_ wiki](https://time-series-features.gitbook.io/catchaMouse16).
+Below we provide a brief getting-started guide to using CatchaMouse16.jl. For more detailed information on the _catchaMouse16_ feature set, such as in-depth descriptions of each feature and a list of publications that use _catchaMouse16_, see the [_catchaMouse16_ wiki](https://time-series-features.gitbook.io/time-series-analysis-tools/feature-subsets/catchamouse16).
 
 <br>
 
