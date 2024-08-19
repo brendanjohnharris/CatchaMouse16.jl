@@ -1,5 +1,6 @@
 name: CI
 on:
+  workflow_dispatch:
   push:
     branches:
       - main
@@ -18,7 +19,6 @@ jobs:
       fail-fast: false
       matrix:
         version:
-          - '1.6'
           - '1.9'
           - '1'
           - 'nightly'
@@ -44,3 +44,5 @@ jobs:
       - uses: codecov/codecov-action@v4
         with:
           files: lcov.info
+        env:
+          CODECOV_TOKEN: ${{ secrets.CODECOV_TOKEN }}
