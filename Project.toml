@@ -1,7 +1,7 @@
 name = "CatchaMouse16"
 uuid = "d380ff4f-f00a-4d7d-8e8f-cf8a6193eec9"
 authors = ["Brendan Harris <bhar9988@uni.sydney.edu.au> and contributors"]
-version = "0.1.0"
+version = "0.1.1"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"
@@ -16,7 +16,7 @@ TimeseriesFeatures = "f3112013-b923-4dfa-b867-8806c885f823"
 catchaMouse16_jll = "dcffe42e-adbb-5815-9d51-5ab017577a26"
 
 [compat]
-DimensionalData = "0.26, 0.27"
+DimensionalData = "0.26 - 0.29"
 ProgressLogging = "0.1"
 Reexport = "1"
 TimeseriesFeatures = "0.4.2 - 0.5"
