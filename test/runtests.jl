@@ -41,7 +41,7 @@ using SafeTestsets
     # Test short name version is the same as the full version
     println("Testing short names, c16")
     @testset "Short names" begin
-        @test all(catchaMouse16(X) .== c16(X))
+        @test parent(catchaMouse16(X)) == parent(c16(X))
     end
 
     println("Testing 1000×20×20 array input")
