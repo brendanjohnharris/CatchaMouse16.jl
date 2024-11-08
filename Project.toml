@@ -1,7 +1,7 @@
 name = "CatchaMouse16"
 uuid = "d380ff4f-f00a-4d7d-8e8f-cf8a6193eec9"
 authors = ["Brendan Harris <bhar9988@uni.sydney.edu.au> and contributors"]
-version = "0.1.1"
+version = "0.1.2"
 
 [deps]
 DelimitedFiles = "8bb1440f-4735-579b-a4ab-409b98df4dab"

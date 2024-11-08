@@ -30,6 +30,12 @@ function _ccall(fName::Symbol, ::Type{T}) where {T <: AbstractFloat}
                     Int(size(𝐱, 1)))
 end
 
+function __catchaMouse16(𝐱::AbstractVector, fName::Symbol)::Float64
+    nancheck(𝐱) && return NaN
+    𝐱 = 𝐱 |> Vector{Float64}
+    _ccall(fName, Cdouble)(𝐱)
+end
+
 """
     _catchaMouse16(𝐱::AbstractArray{Float64}, fName::Symbol)
     _catchaMouse16(fName::Symbol, 𝐱::AbstractArray{Float64})
@@ -42,18 +48,10 @@ CatchaMouse16._catchaMouse16(𝐱, :AC_nl_035)
 ```
 """
 function _catchaMouse16(𝐱::AbstractVector, fName::Symbol)::Float64
-    nancheck(𝐱) && return NaN
-    𝐱 = 𝐱 |> Vector{Float64}
-    redirect_stderr(devnull) do
-        redirect_stdout(devnull) do # * Suppress C warnings
-            out = _ccall(fName, Cdouble)(𝐱)
-            isnan(out) && @debug "Time series is too short; returning NaN"
-            return out
-        end
-    end
+    __catchaMouse16(𝐱, fName)
 end
 function _catchaMouse16(X::AbstractMatrix, fName::Symbol)::Matrix{Float64}
-    mapslices(𝐱 -> _catchaMouse16(𝐱, fName), X, dims = [1])
+    mapslices(𝐱 -> __catchaMouse16(𝐱, fName), X, dims = [1])
 end
 
 """

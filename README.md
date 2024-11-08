@@ -50,7 +50,16 @@ If an array is provided, containing one time series in each of N columns, then a
 A `FeatureArray` has most of the properties and methods of an Array but is annotated with feature names that can be accessed with `getnames(F)`.
 If a vector is provided (a single time series) then a vector of feature values will be returned as a `FeatureVector`, a one-dimensional `FeatureArray`.
 
-Finally, note that since `catchaMouse16` is a `FeatureSet` it can be indexed with a vector of feature names as symbols to calculate a `FeatureArray` for a subset of _catchaMouse16_. For details on the `Feature`, `FeatureSet` and `FeatureArray` types check out the package docs.
+Since `catchaMouse16` is a `FeatureSet` it can be indexed with a vector of feature names as symbols to calculate a `FeatureArray` for a subset of _catchaMouse16_. For details on the `Feature`, `FeatureSet` and `FeatureArray` types check out the package docs.
+
+Note that some features may spit out warnings to stderr or stdout for short time series. You can suppress these using:
+```Julia
+f = redirect_stderr(devnull) do
+        redirect_stdout(devnull) do
+            catchaMouse16(𝐱)
+        end
+    end
+```
 
 <br>
 
