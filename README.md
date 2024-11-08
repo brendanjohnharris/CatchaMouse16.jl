@@ -52,13 +52,10 @@ If a vector is provided (a single time series) then a vector of feature values w
 
 Since `catchaMouse16` is a `FeatureSet` it can be indexed with a vector of feature names as symbols to calculate a `FeatureArray` for a subset of _catchaMouse16_. For details on the `Feature`, `FeatureSet` and `FeatureArray` types check out the package docs.
 
-Note that some features may spit out warnings to stderr or stdout for short time series. You can suppress these using:
+Note that some features may spit out warnings to stderr or stdout for short time series. You can suppress these with:
 ```Julia
-f = redirect_stderr(devnull) do
-        redirect_stdout(devnull) do
-            catchaMouse16(𝐱)
-        end
-    end
+using Suppressor
+@suppress catchaMouse16(𝐱)
 ```
 
 <br>
