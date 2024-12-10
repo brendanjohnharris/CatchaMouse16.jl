@@ -147,3 +147,14 @@ end
     # # pprof()
     # # @profview i(X)
 end
+
+@testset "Types" begin
+    X = rand(Int16, 1000, 10, 10)
+    _F = catchaMouse16(X)
+    @test eltype(_F) <: Float64
+    for T in [Int, Int32, Float32, Float64]
+        F = catchaMouse16(T.(X))
+        @test eltype(F) <: Float64
+        @test F ≈ _F rtol=1e-6
+    end
+end
