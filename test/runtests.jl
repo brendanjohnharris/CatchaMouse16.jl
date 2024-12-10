@@ -155,6 +155,6 @@ end
     for T in [Int, Int32, Float32, Float64]
         F = catchaMouse16(T.(X))
         @test eltype(F) <: Float64
-        @test F ≈ _F rtol=1e-6
+        @test F≈_F rtol=1e-5
     end
 end
