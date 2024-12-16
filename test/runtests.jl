@@ -28,7 +28,6 @@ println("Testing sample datasets")
 
 # Test catchaMouse16 on a matrix
 println("Testing 1000×100 array input")
-catchaMouse16(randn(10, 10))
 @testitem "Matrices" setup=[Setup] begin
     X = randn(1000, 100)
     @test @time catchaMouse16(X) isa FeatureMatrix
@@ -41,14 +40,12 @@ println("Testing short names, c16")
 end
 
 println("Testing 1000×20×20 array input")
-catchaMouse16(randn(10, 10, 10))
 @testitem "Arrays" setup=[Setup] begin
     X = randn(1000, 20, 20)
     @test @time catchaMouse16(X) isa FeatureArray{T, 3} where {T}
 end
 
 println("Testing FeatureArray indexing")
-
 @testitem "FeatureArray indexing" setup=[Setup] begin
     𝑓s = [:AC_nl_035, :AC_nl_036]
     𝑓 = FeatureSet([AC_nl_036, AC_nl_035])
