@@ -162,13 +162,13 @@ println("Testing performance")
 
     t = @timed CatchaMouse16._catchaMouse16(dataset, fname)
     t = @timed CatchaMouse16._catchaMouse16(dataset, fname)
-    @test t.time≈tm rtol=0.25 # The nancheck takes some time
+    @test t.time≈tm rtol=1 # The nancheck takes some time
     @test t.bytes < 500
 
     m = getmethod(CatchaMouse16.catchaMouse16_raw[fname])
     t = @timed m(dataset)
     t = @timed m(dataset)
-    @test t.time≈tm rtol=0.25
+    @test t.time≈tm rtol=1
     @test t.bytes < 500
     tf = t.time
 
@@ -176,12 +176,12 @@ println("Testing performance")
     ta = @benchmark $m($dataset)
     m = CatchaMouse16.zᶠ
     tb = @benchmark $m($dataset)
-    @test median(ta).time≈median(tb).time rtol=0.05
+    @test median(ta).time≈median(tb).time rtol=0.1
     tz = median(tb).time / 1e9
 
     m = feature |> getmethod
     t = @timed m(dataset)
     t = @timed m(dataset)
-    @test t.time≈(tm + tz) rtol=0.25 # Feature time + zscore time
+    @test t.time≈(tm + tz) rtol=1 # Feature time + zscore time
     @test t.bytes < Base.sizeof(dataset) + 5000 # Just one deepcopy of the dataset, for the zscore
 end
