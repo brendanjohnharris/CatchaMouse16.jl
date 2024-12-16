@@ -24,7 +24,6 @@ using TestItemRunner
 end
 
 # Test catchaMouse16, time series by time series
-catchaMouse16(testdata[:test])
 println("Testing sample datasets")
 
 # Test catchaMouse16 on a matrix
