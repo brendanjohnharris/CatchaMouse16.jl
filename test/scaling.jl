@@ -18,7 +18,8 @@ p = plot(N⃗, t⃗, scale = :log10, label = :none, color = :cornflowerblue,
          markerstrokecolor = :cornflowerblue, markersize = 2, marker = :o,
          right_margin = 15Plots.mm, xlims = (1e1, 1e5),
          framestyle = :box, grid = :off)
-plot!(xguide = "Time-series length (samples)", yguide = "Time (s)", minorticks = true,
+plot!(xguide = "Time-series length (samples)", yguide = "Seconds per time series",
+      minorticks = true,
       yforeground_color_guide = :cornflowerblue, dpi = 1200,
       background_color = :transparent, foreground_color_axis = gray,
       foreground_color_border = gray, foreground_color_text = gray,
@@ -26,7 +27,7 @@ plot!(xguide = "Time-series length (samples)", yguide = "Time (s)", minorticks =
 
 plot!(twinx(), N⃗, b⃗ ./ (1024^2), scale = :log10, label = :none, color = :crimson,
       markersize = 2, marker = :o, markerstrokewidth = 0, grid = :off,
-      yguide = "Memory (MiB)", yforeground_color_guide = :crimson, minorticks = true,
+      yguide = "MiB per time series", yforeground_color_guide = :crimson, minorticks = true,
       xticks = nothing, markerstrokecolor = :crimson, xlims = (1e1, 1e5),
       foreground_color_axis = gray, foreground_color_border = gray,
       foreground_color_text = gray, foreground_color_guide = gray, framestyle = :box)
@@ -36,16 +37,20 @@ rm(fname, force = true)
 savefig(p, fname)
 
 ## Multi-threaded
-𝒳 = [randn(N, 100) for N in N⃗];
+nsamples = 100
+𝒳 = [randn(N, nsamples) for N in N⃗];
 t⃗, b⃗ = timeCatchaMouse16(𝒳);
+t⃗ = t⃗ ./ nsamples # Time per time series
+b⃗ = b⃗ ./ nsamples # Memory per time series
 
 gray = :gray50
 p = plot(N⃗, t⃗, scale = :log10, label = :none, color = :cornflowerblue,
          markerstrokecolor = :cornflowerblue, markersize = 2, marker = :o,
-         right_margin = 15Plots.mm, ylims = (10^(-2.5), 10^1.3), xlims = (1e1, 1e5),
+         right_margin = 15Plots.mm, ylims = (10^(-5), 10^(-0.5)), xlims = (1e1, 1e5),
          grid = :off,
-         framestyle = :box, yticks = exp10.(-2:1))
-plot!(xguide = "Time-series length (samples)", yguide = "Time (s)", minorticks = true,
+         framestyle = :box, yticks = exp10.(-5:1))
+plot!(xguide = "Time-series length (samples)", yguide = "Seconds per time series",
+      minorticks = true,
       yforeground_color_guide = :cornflowerblue, dpi = 1200,
       background_color = :transparent, foreground_color_axis = gray,
       foreground_color_border = gray, foreground_color_text = gray,
@@ -53,7 +58,8 @@ plot!(xguide = "Time-series length (samples)", yguide = "Time (s)", minorticks =
 
 plot!(twinx(), N⃗, b⃗ ./ (1024^2), scale = :log10, label = :none, color = :crimson,
       markersize = 2, marker = :o, markerstrokewidth = 0, grid = :off,
-      yguide = "Memory (MiB)", yforeground_color_guide = :crimson, minorticks = true,
+      yguide = "MiB per time series", yforeground_color_guide = :crimson,
+      minorticks = true,
       xticks = nothing, markerstrokecolor = :crimson, xlims = (1e1, 1e5),
       foreground_color_axis = gray, foreground_color_border = gray,
       foreground_color_text = gray, foreground_color_guide = gray, framestyle = :box)
