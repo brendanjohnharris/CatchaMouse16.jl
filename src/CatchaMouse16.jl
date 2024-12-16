@@ -20,7 +20,7 @@ import TimeseriesFeatures: zᶠ, z_score
 include("metadata.jl")
 include("testdata.jl")
 
-nancheck(𝐱::AbstractVector) = any(isinf.(𝐱)) || any(isnan.(𝐱)) || length(𝐱) < 3
+nancheck(𝐱::AbstractVector) = length(𝐱) < 3 || any(isnan, 𝐱) || any(isinf, 𝐱)
 
 function _ccall(fName::Symbol, ::Type{T}) where {T <: Integer}
     f(𝐱)::T = ccall(fbindings[fName], Cint, (Ptr{Array{Cint}}, Cint), 𝐱, Int(size(𝐱, 1)))
@@ -32,7 +32,6 @@ end
 
 function __catchaMouse16(𝐱::AbstractVector, fName::Symbol)::Float64
     nancheck(𝐱) && return NaN
-    𝐱 = 𝐱 |> Vector{Float64}
     _ccall(fName, Cdouble)(𝐱)
 end
 
@@ -54,12 +53,17 @@ function _catchaMouse16(X::AbstractMatrix, fName::Symbol)::Matrix{Float64}
     mapslices(𝐱 -> __catchaMouse16(𝐱, fName), X, dims = [1])
 end
 
+const features = map(featurenames) do name
+    function feature(𝐱::AbstractVector{<:Real})::Float64
+        nancheck(𝐱) && return NaN
+        _ccall(name, Cdouble)(convert(Vector{Float64}, 𝐱))
+    end
+end
+
 """
 The set of CatchaMouse16 features without a preliminary z-score
 """
-catchaMouse16_raw = FeatureSet([(x -> _catchaMouse16(x, f)) for f in featurenames],
-                               featurenames,
-                               featurekeywords, featuredescriptions)
+catchaMouse16_raw = FeatureSet(features, featurenames, featuredescriptions, featurekeywords)
 
 """
     catchaMouse16(𝐱::Vector)
@@ -80,9 +84,8 @@ F = catchaMouse16(X)
 F = catchaMouse16[:AC_nl_035](X)
 ```
 """
-catchaMouse16 = SuperFeatureSet([(x -> _catchaMouse16(x, f)) for f in featurenames],
-                                featurenames,
-                                featuredescriptions, featurekeywords, zᶠ)
+catchaMouse16 = SuperFeatureSet(features, featurenames, featuredescriptions,
+                                featurekeywords, zᶠ)
 export catchaMouse16
 
 for f in featurenames
@@ -109,9 +112,8 @@ AC_nl_035
     c16
 The CatchaMouse16 feature set with shortened names; see [`catchaMouse16`](@ref).
 """
-c16 = SuperFeatureSet([(x -> _catchaMouse16(x, f)) for f in featurenames],
-                      short_featurenames,
-                      featuredescriptions, featurekeywords, zᶠ)
+c16 = SuperFeatureSet(features, short_featurenames, featuredescriptions, featurekeywords,
+                      zᶠ)
 export c16
 
 end

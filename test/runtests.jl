@@ -1,26 +1,26 @@
-using CatchaMouse16
-using CatchaMouse16.DimensionalData
-import CatchaMouse16.testdata, CatchaMouse16.testoutput, CatchaMouse16.testnames
 using Test
-using StatsBase
-# using BenchmarkTools
+using TestItems
+using TestItemRunner
 
-function isnearlyequalorallnan(a::AbstractArray, b::AbstractArray)
-    replace!(a, NaN => 0.0)
-    replace!(b, NaN => 0.0)
-    all(isapprox.(a, b, atol = 1e-6))
-end
-function isnearlyequalorallnan(a::Real, b::Real)
-    isapprox(a, b, atol = 1e-6) || (isnan(a) && isnan(b))
-end
+@run_package_tests
 
-# Test features one by one
-println("Testing individual features")
-@testset "Feature $(getname(f))" for f in catchaMouse16
-    @inferred CatchaMouse16._catchaMouse16(testdata[:test], getname(f))
-    @inferred CatchaMouse16._catchaMouse16(randn(1000, 10), getname(f))
-    # @test isnearlyequalorallnan(f(testdata[:test]), testoutput[:test][getname(f)])
-    @test !isnan(f(randn(1000)))
+@testsnippet Setup begin
+    using CatchaMouse16
+    using CatchaMouse16.DimensionalData
+    import CatchaMouse16.testdata, CatchaMouse16.testoutput, CatchaMouse16.testnames
+    using Test
+    using StatsBase
+    using BenchmarkTools
+
+    function isnearlyequalorallnan(a::AbstractArray, b::AbstractArray)
+        replace!(a, NaN => 0.0)
+        replace!(b, NaN => 0.0)
+        all(isapprox.(a, b, atol = 1e-6))
+    end
+    function isnearlyequalorallnan(a::Real, b::Real)
+        isapprox(a, b, atol = 1e-6) || (isnan(a) && isnan(b))
+    end
+    X = randn(1000, 100)
 end
 
 # Test catchaMouse16, time series by time series
@@ -30,27 +30,27 @@ println("Testing sample datasets")
 # Test catchaMouse16 on a matrix
 println("Testing 1000×100 array input")
 catchaMouse16(randn(10, 10))
-X = randn(1000, 100)
-@testset "Matrices" begin
+@testitem "Matrices" setup=[Setup] begin
+    X = randn(1000, 100)
     @test @time catchaMouse16(X) isa FeatureMatrix
 end
 
 # Test short name version is the same as the full version
 println("Testing short names, c16")
-@testset "Short names" begin
+@testitem "Short names" setup=[Setup] begin
     @test parent(catchaMouse16(X)) == parent(c16(X))
 end
 
 println("Testing 1000×20×20 array input")
 catchaMouse16(randn(10, 10, 10))
-X = randn(1000, 20, 20)
-@testset "Arrays" begin
+@testitem "Arrays" setup=[Setup] begin
+    X = randn(1000, 20, 20)
     @test @time catchaMouse16(X) isa FeatureArray{T, 3} where {T}
 end
 
 println("Testing FeatureArray indexing")
 
-@testset "FeatureArray indexing" begin
+@testitem "FeatureArray indexing" setup=[Setup] begin
     𝑓s = [:AC_nl_035, :AC_nl_036]
     𝑓 = FeatureSet([AC_nl_036, AC_nl_035])
 
@@ -74,7 +74,7 @@ println("Testing FeatureArray indexing")
 end
 
 println("Testing Feature evaluation with DimArrays")
-@testset "DimArrays" begin
+@testitem "DimArrays" setup=[Setup] begin
     x = DimArray(randn(1000), (Dim{:x}(1:1000),))
     @test first(AC_nl_035(x)) == AC_nl_035(x |> vec)
     @test length(AC_nl_035(x)) == 1
@@ -82,21 +82,20 @@ println("Testing Feature evaluation with DimArrays")
 end
 
 println("Testing SuperFeatures")
-@testset "SuperFeatures" begin
+@testitem "SuperFeatures" setup=[Setup] begin
     𝐱 = rand(1000, 2)
     # CatchaMouse16.zᶠ(𝐱)
-    μ = SuperFeature(CatchaMouse16.mean, :μ, ["0"],
-                     "Mean value of the z-scored time series",
-                     super = CatchaMouse16.zᶠ)
-    σ = SuperFeature(CatchaMouse16.std, :σ, ["1"],
-                     "Standard deviation of the z-scored time series";
-                     super = CatchaMouse16.zᶠ)
+    μ = SuperFeature(CatchaMouse16.mean, :μ,
+                     "Mean value of the z-scored time series", ["0"], CatchaMouse16.zᶠ)
+    σ = SuperFeature(CatchaMouse16.std, :σ,
+                     "Standard deviation of the z-scored time series", ["1"],
+                     CatchaMouse16.zᶠ)
     𝒇 = SuperFeatureSet([μ, σ])
     @test all(isapprox.(𝒇(𝐱), [0.0 0.0; 1.0 1.0]; atol = 1e-9))
 end
 
 println("Testing CatchaMouse16 SuperFeatures")
-@testset "CatchaMouse16 SuperFeatures" begin
+@testitem "CatchaMouse16 SuperFeatures" setup=[Setup] begin
     catchaMouse16² = vcat(fill(catchaMouse16, 22)...)
     catchaMouse16_raw² = vcat(fill(CatchaMouse16.catchaMouse16_raw, 22)...)
     X = rand(1000, 10)
@@ -114,7 +113,7 @@ println("Testing CatchaMouse16 SuperFeatures")
     # @benchmark mapslices(CatchaMouse16.z_score, X, dims=1)
 end
 
-@testset "Multithreading" begin
+@testitem "Multithreading" setup=[Setup] begin
     X = randn(10000)
     meths = CatchaMouse16.featurenames
     cres = zeros(size(X)[1], length(meths))
@@ -134,21 +133,9 @@ end
 
     i(X) = catchaMouse16[meths](@views [X[i:(i + window)]
                                         for i in 1:(size(X, 1) - window)])
-
-    # BenchmarkTools.DEFAULT_PARAMETERS.seconds = 5
-    # f(X) # @benchmark f(X)
-    # g(X) # @benchmark g(X)
-    # h(X) # @benchmark h(X)
-    # i(X) # @benchmark i(X)
-    # # using PProf
-    # # using Profile
-    # # Profile.clear()
-    # # @profile i(X)
-    # # pprof()
-    # # @profview i(X)
 end
 
-@testset "Types" begin
+@testitem "Types" setup=[Setup] begin
     X = rand(Int16, 1000, 10, 10)
     _F = catchaMouse16(X)
     @test eltype(_F) <: Float64
@@ -157,4 +144,44 @@ end
         @test eltype(F) <: Float64
         @test F≈_F rtol=1e-4
     end
+end
+
+println("Testing performance")
+@testitem "Performance" setup=[Setup] begin
+    @inferred CatchaMouse16.catchaMouse16(randn(1000))
+
+    dataset = randn(10000000)
+    fname = :AC_nl_035
+    feature = eval(fname)
+
+    m = CatchaMouse16._ccall(fname, Float64)
+    t = @timed m(dataset)
+    t = @timed m(dataset)
+    tm = t.time
+    @test t.bytes < 500
+
+    t = @timed CatchaMouse16._catchaMouse16(dataset, fname)
+    t = @timed CatchaMouse16._catchaMouse16(dataset, fname)
+    @test t.time≈tm rtol=0.25 # The nancheck takes some time
+    @test t.bytes < 500
+
+    m = getmethod(CatchaMouse16.catchaMouse16_raw[fname])
+    t = @timed m(dataset)
+    t = @timed m(dataset)
+    @test t.time≈tm rtol=0.25
+    @test t.bytes < 500
+    tf = t.time
+
+    m = CatchaMouse16.z_score
+    ta = @benchmark $m($dataset)
+    m = CatchaMouse16.zᶠ
+    tb = @benchmark $m($dataset)
+    @test median(ta).time≈median(tb).time rtol=0.05
+    tz = median(tb).time / 1e9
+
+    m = feature |> getmethod
+    t = @timed m(dataset)
+    t = @timed m(dataset)
+    @test t.time≈(tm + tz) rtol=0.25 # Feature time + zscore time
+    @test t.bytes < Base.sizeof(dataset) + 5000 # Just one deepcopy of the dataset, for the zscore
 end
