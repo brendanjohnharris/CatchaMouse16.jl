@@ -1,8 +1,10 @@
 using CatchaMouse16
 using Plots
+using MoreMaps
 
+chart = Chart()
 function timeCatchaMouse16(𝒳)
-    t⃗ = [(@info size(𝐱); @timed catchaMouse16(𝐱)) for 𝐱 in 𝒳]
+    t⃗ = [(@info size(𝐱); @timed catchaMouse16(𝐱; chart)) for 𝐱 in 𝒳]
     ([x.time for x in t⃗], [x.bytes for x in t⃗])
 end;
 timeCatchaMouse16([randn(1000)])
