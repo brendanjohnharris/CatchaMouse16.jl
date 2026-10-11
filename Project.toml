@@ -1,6 +1,6 @@
 name = "CatchaMouse16"
 uuid = "d380ff4f-f00a-4d7d-8e8f-cf8a6193eec9"
-version = "0.3.0"
+version = "0.3.1"
 authors = ["Brendan Harris <bhar9988@uni.sydney.edu.au> and contributors"]
 
 [deps]
