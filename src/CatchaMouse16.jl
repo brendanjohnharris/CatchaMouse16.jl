@@ -27,12 +27,12 @@ include("testdata.jl")
 
 nancheck(𝐱::AbstractVector) = length(𝐱) < 3 || any(isnan, 𝐱) || any(isinf, 𝐱)
 
-function _ccall(fName::Symbol, ::Type{T}) where {T <: Integer}
-    f(𝐱)::T = ccall(fbindings[fName], Cint, (Ptr{Array{Cint}}, Cint), 𝐱, Int(size(𝐱, 1)))
+@inline function _ccall(fName::Symbol, ::Type{T}) where {T <: Integer}
+    f(𝐱)::T = ccall(fbindings[fName], Cint, (Ptr{Cint}, Cint), 𝐱, size(𝐱, 1))
 end
-function _ccall(fName::Symbol, ::Type{T}) where {T <: AbstractFloat}
-    f(𝐱)::T = ccall(fbindings[fName], Cdouble, (Ptr{Array{Cdouble}}, Cint), 𝐱,
-                    Int(size(𝐱, 1)))
+@inline function _ccall(fName::Symbol, ::Type{T}) where {T <: AbstractFloat}
+    f(𝐱)::T = ccall(fbindings[fName], Cdouble, (Ptr{Cdouble}, Cint), 𝐱,
+                    size(𝐱, 1))
 end
 
 function __catchaMouse16(𝐱::AbstractVector, fName::Symbol)::Float64
