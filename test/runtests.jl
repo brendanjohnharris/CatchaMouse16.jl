@@ -41,10 +41,14 @@ println("Testing sample datasets")
                    0.2365137600039373, 1.427061043380725, 0.17441604792151594, NaN, 0.0,
                    1.2160864188125922, -0.04587909238408182, 0.0, 0.0,
                    0.17621430826822912, NaN, NaN, 0.13026896495847023, NaN])
+    # DN_RemovePoints qsorts without breaking ties, so tied values (as in these series) are
+    # dropped in an order that depends on the C library; macOS differs from glibc
+    skip = Sys.isapple() ? [:DN_RemovePoints_absclose_05_ac2rat] : Symbol[]
     for (s, r) in ref
         f = Array(CatchaMouse16.catchaMouse16_raw(testdata[s]))
         @test isnan.(f) == isnan.(r)
-        @test filter(!isnan, f)≈filter(!isnan, r) rtol=1e-10
+        i = findall(n -> n ∉ skip, CatchaMouse16.featurenames) ∩ findall(!isnan, r)
+        @test f[i]≈r[i] rtol=1e-10
     end
     @test all(isnan, CatchaMouse16.catchaMouse16_raw(testdata[:testNaN]))
 end
