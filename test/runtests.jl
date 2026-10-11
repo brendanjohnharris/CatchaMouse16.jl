@@ -25,6 +25,29 @@ end
 
 # Test catchaMouse16, time series by time series
 println("Testing sample datasets")
+@testitem "Reference values" setup=[Setup] begin
+    # From CatchaMouse16 0.3.0 (TimeseriesFeatures 0.6, DimensionalData 0.29) on the bundled series
+    ref = Dict(:test => [2.875377261401869, 2.855570538752459, 2.9187178611949864,
+                   1.324309696652069, 0.4426370515516933, 0.5445599109679107,
+                   0.07003510827345188, 0.261431784092801, 0.11111111111111112, 0.0,
+                   0.007434944237918215, 0.17755148598226772, -2.2096969230384587, NaN,
+                   0.990758020514418, 0.8727466199999996],
+               :testSinusoid => [0.4509145031660828, 0.45090417355280243,
+                   0.4510919358781395, 1.3251622950476059, 0.5501054858792254,
+                   7.358147606405264e-5, 0.08194074608854059, 0.05229435885535619,
+                   -0.10121034266290826, 0.0, 0.009, 0.08307506308540712,
+                   -47.3682069091716, NaN, 0.9908867356778752, 0.74415834],
+               :testShort => [0.17936216722051213, 0.15913036340366593,
+                   0.2365137600039373, 1.427061043380725, 0.17441604792151594, NaN, 0.0,
+                   1.2160864188125922, -0.04587909238408182, 0.0, 0.0,
+                   0.17621430826822912, NaN, NaN, 0.13026896495847023, NaN])
+    for (s, r) in ref
+        f = Array(CatchaMouse16.catchaMouse16_raw(testdata[s]))
+        @test isnan.(f) == isnan.(r)
+        @test filter(!isnan, f)≈filter(!isnan, r) rtol=1e-10
+    end
+    @test all(isnan, CatchaMouse16.catchaMouse16_raw(testdata[:testNaN]))
+end
 
 # Test catchaMouse16 on a matrix
 println("Testing 1000×100 array input")
