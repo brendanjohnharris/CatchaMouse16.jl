@@ -7,11 +7,16 @@ using TimeseriesFeatures
 using LinearAlgebra
 import Statistics: mean, std, cov
 
+const fbindings = Dict{Symbol, Ptr{Cvoid}}()
+
 function __init__()
     catchaMouse16_jll.__init__()
     lib = dlopen(libcatchaMouse16)
-    global fbindings = Dict{Symbol, Ptr{Cvoid}}(f => dlsym(lib, f)
-                                                for f in featurenames)
+
+    empty!(fbindings)
+    for f in featurenames
+        fbindings[f] = dlsym(lib, f)
+    end
 end
 
 @reexport using TimeseriesFeatures
