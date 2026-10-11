@@ -43,7 +43,7 @@ end
 """
     _catchaMouse16(𝐱::AbstractArray{Float64}, fName::Symbol)
     _catchaMouse16(fName::Symbol, 𝐱::AbstractArray{Float64})
-Evaluate the feature `fName` on the single time series `𝐱`. See `CatchaMouse16.featuredescriptions` for a summary of the 22 available time series features. Time series with NaN or Inf values will produce NaN feature values.
+Evaluate the feature `fName` on the single time series `𝐱`. See `CatchaMouse16.featuredescriptions` for a summary of the 16 available time series features. Time series with NaN or Inf values will produce NaN feature values.
 
 # Examples
 ```julia
