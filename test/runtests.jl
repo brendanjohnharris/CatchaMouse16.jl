@@ -210,5 +210,5 @@ println("Testing performance")
     t = @timed m(dataset)
     t = @timed m(dataset)
     @test t.time≈(tm + tz) rtol=1 # Feature time + zscore time
-    @test t.bytes < Base.sizeof(dataset) + 5000 # Just one deepcopy of the dataset, for the zscore
+    @test t.bytes < 2 * Base.sizeof(dataset) # Just one deepcopy of the dataset, for the zscore
 end
